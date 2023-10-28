@@ -13,6 +13,15 @@ pipeline{
              sh "docker build -t pav537/2824:latest ."
       }
     }
+        stage('docker push')
+         {
+            steps
+           {
+            withDockerRegistry([ credentialsId: "dockerhub", url: "" ]) {
+            dockerImage.push()
+              }
+            }
+         }
 
      stage('create nodeport service')
         {
