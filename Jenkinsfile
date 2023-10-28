@@ -2,7 +2,6 @@
 pipeline{
 	 environment { 
          DOCKERHUB_CREDENTIALS= credentials('dockerhub')     
-
     }
 
   agent {label "master"}
@@ -18,26 +17,26 @@ pipeline{
              sh "docker build -t pav537/2824:latest ."
 		}
 		}
-		stage('Login to Docker Hub') 
-			{         
-			steps{                            
-				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'                 
-				echo 'Login Completed'                
-				}           
-			} 
+	 stage('Login to Docker Hub') 
+	      {         
+		  steps{                            
+			sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'                 
+			echo 'Login Completed'                
+		        }           
+		} 
 		
 	 stage('Deploy our image') 
 	   { 
             steps 
-			{ 
-			  sh "docker push pav537/2824:latest"			
+		{ 
+		  sh "docker push pav537/2824:latest"			
             } 
         }
          
      stage('create nodeport service')
         {
           steps {
-            sh "sudo kubectl create -f k8s.yml"
+            sh "kubectl create -f k8s.yml"
           }
         }
     }
