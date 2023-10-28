@@ -17,7 +17,7 @@ pipeline{
      stage('create nodeport service')
         {
           steps {
-            sh "sudo kubectl create -f k8s.yml"
+            sh "kubectl create -f k8s.yml"
           }
         }
 
