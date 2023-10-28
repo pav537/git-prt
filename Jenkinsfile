@@ -1,5 +1,11 @@
 #!groovy
 pipeline{
+	 environment { 
+        registry = "YourDockerhubAccount/YourRepository" 
+        registryCredential = 'dockerhub' 
+        dockerImage = '' 
+    }
+
   agent {label "master"}
   
     stages
@@ -11,21 +17,22 @@ pipeline{
       	     print("building docker image") 
              sh "sudo chmod 777 /var/run/docker.sock"
              sh "docker build -t pav537/2824:latest ."
-      }
-    }
-        stage('Push') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'pav537', passwordVariable: 'Prathyush@91')]) {
-                    sh 'docker login -u $USERNAME -p $PASSWORD'
-                }
-                sh 'docker push pav537/2824:latest'
+		}
+		}
+	 stage('Deploy our image') 
+	   { 
+            steps { 
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
+                    }
+                } 
             }
-        }
-
+        } 
      stage('create nodeport service')
         {
           steps {
-            sh "kubectl create -f k8s.yml"
+            sh "sudo kubectl create -f k8s.yml"
           }
         }
 
