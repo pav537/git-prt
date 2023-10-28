@@ -13,15 +13,14 @@ pipeline{
              sh "docker build -t pav537/2824:latest ."
       }
     }
-        stage('docker push')
-         {
-            steps
-           {
-            withDockerRegistry([ credentialsId: "dockerhub", url: "" ]) {
-            dockerImage.push()
-              }
+        stage('Push') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'pav537', passwordVariable: 'Prathyush@91')]) {
+                    sh 'docker login -u $USERNAME -p $PASSWORD'
+                }
+                sh 'docker push pav537/2824:latest'
             }
-         }
+        }
 
      stage('create nodeport service')
         {
